@@ -1,359 +1,284 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle of Britpop Quiz</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
-        
-        .quiz-container {
-            width: 1200px;
-            height: 600px;
-            margin: 0 auto;
-            font-family: 'Merriweather', serif;
-        }
-        
-        .heading-font {
-            font-family: 'Comfortaa', cursive;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .slide-up {
-            animation: slideUp 0.4s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .option-button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .option-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .progress-bar {
-            transition: width 0.3s ease-out;
-        }
-        
-        .typeform-input {
-            border: none;
-            border-bottom: 2px solid #e5e7eb;
-            background: transparent;
-            transition: border-color 0.2s ease;
-        }
-        
-        .typeform-input:focus {
-            outline: none;
-            border-bottom-color: #3b82f6;
-        }
-    </style>
-</head>
-<body class="bg-white">
-    <div class="quiz-container bg-white overflow-hidden">
-        
-        <!-- Start Screen -->
-        <div id="start-screen" class="h-full flex flex-col justify-center px-12">
-            <div class="max-w-2xl fade-in">
-                <h1 class="heading-font text-3xl font-light text-gray-900 mb-2 leading-tight">
-                    Battle of <span class="font-semibold">Britpop</span>
-                </h1>
-                
-                <p class="text-base text-gray-600 mb-4 font-light leading-relaxed">
-                    Test your knowledge of the legendary 1995 chart battle between Blur and Oasis that defined a generation.
-                </p>
-                
-                <div class="flex items-center text-sm text-gray-500 mb-6">
-                    <span>10 questions • 5 minutes</span>
-                </div>
-                
-                <button onclick="startQuiz()" class="bg-gray-900 hover:bg-gray-800 text-white font-medium px-6 py-2 rounded-xl transition-all duration-200 transform hover:scale-105">
-                    Start Quiz
-                </button>
-            </div>
-        </div>
+<!-- /embeds/britpop-quiz.html -->
+<!-- Self‑contained, Squarespace‑safe. No external CSS/JS deps. Scoped styles. -->
+<div id="britpop-quiz" class="bpq" aria-live="polite">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+    /* ===== Scoped variables & base ===== */
+    #britpop-quiz { --bg:#fff; --text:#000; --muted:#4b5563; --border:#e5e5e5; --card:#fff; --accent:#000; --accent-weak:#000; --green:#000; --green-weak:#f5f5f5; --red:#000; --red-weak:#f5f5f5; --radius:14px; --shadow:0 6px 20px rgba(0,0,0,.06); --heading-font: 'Comfortaa', 'Avenir Next', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --body-font: 'Merriweather', Georgia, 'Times New Roman', serif; }
 
-        <!-- Question Screen -->
-        <div id="question-screen" class="h-full hidden flex flex-col">
-            <!-- Progress Header -->
-            <div class="px-12 py-3 border-b border-gray-100">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-500">
-                        Question <span id="current-question">1</span> of 10
-                    </span>
-                    <span class="text-sm font-medium text-gray-900">
-                        <span id="current-score">0</span>/10 correct
-                    </span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-1">
-                    <div id="progress-bar" class="progress-bar bg-blue-600 h-1 rounded-full" style="width: 10%"></div>
-                </div>
-            </div>
-            
-            <!-- Question Content -->
-            <div class="flex-1 flex items-center px-12 py-4">
-                <div class="max-w-4xl w-full">
-                    <h2 id="question-text" class="heading-font text-xl font-light text-gray-900 mb-4 leading-relaxed slide-up"></h2>
-                    
-                    <div id="answers-container" class="space-y-3 slide-up">
-                        <!-- Answer options will be inserted here -->
-                    </div>
-                    
-                    <div id="feedback" class="mt-3 hidden slide-up">
-                        <div class="p-3 rounded-2xl">
-                            <p id="feedback-text" class="text-sm font-medium"></p>
-                        </div>
-                    </div>
-                    
-                    <button id="next-button" onclick="nextQuestion()" class="hidden mt-3 bg-gray-900 hover:bg-gray-800 text-white font-medium px-5 py-2 rounded-xl transition-colors duration-200">
-                        Continue
-                    </button>
-                </div>
-            </div>
-        </div>
+    #britpop-quiz *, #britpop-quiz *::before, #britpop-quiz *::after { box-sizing: border-box; }
+    #britpop-quiz { color:var(--text); font-family:var(--body-font); line-height:1.65; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color: transparent; color-scheme: light; }
 
-        <!-- Results Screen -->
-        <div id="results-screen" class="h-full hidden flex flex-col justify-center px-12">
-            <div class="max-w-2xl fade-in">
-                <h1 class="heading-font text-3xl font-light text-gray-900 mb-3 leading-tight">
-                    Quiz <span class="font-semibold">Complete</span>
-                </h1>
-                
-                <div class="mb-5">
-                    <div class="text-4xl font-light text-gray-900 mb-2">
-                        <span id="final-score">0</span><span class="text-xl text-gray-500">/10</span>
-                    </div>
-                    <p id="score-message" class="text-base text-gray-600 font-light"></p>
-                </div>
-                
-                <div class="flex space-x-4">
-                    <button onclick="restartQuiz()" class="bg-gray-900 hover:bg-gray-800 text-white font-medium px-5 py-2 rounded-xl transition-colors duration-200">
-                        Try Again
-                    </button>
-                    <button onclick="shareResults()" class="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-5 py-2 rounded-xl transition-colors duration-200">
-                        Share Results
-                    </button>
-                </div>
-            </div>
-        </div>
+    .bpq-container { width:100%; max-width: min(90ch, 92vw, 760px); margin:0 auto; padding: clamp(16px, 4vw, 32px); }
+
+    /* Headings */
+    .bpq h1, .bpq h2 { font-family: var(--heading-font); margin:0; letter-spacing:.2px; font-weight:400; }
+    .bpq h1 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height:1.2; }
+
+    .bpq .screen { padding: clamp(16px, 4vw, 36px) clamp(14px, 4vw, 36px) calc(clamp(16px, 4vw, 36px) + env(safe-area-inset-bottom)); }
+
+    /* Start screen */
+    .bpq .lead { color:var(--muted); }
+    .bpq .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; min-height:44px; border-radius:999px; border:1px solid var(--border); background:#000; color:#fff; font-weight:600; cursor:pointer; transition: transform .08s ease, background .2s ease, border-color .2s ease; box-shadow:none; font-size:0.95rem; }
+    .bpq .btn:hover { transform: translateY(-1px); }
+    .bpq .btn.secondary { background:transparent; color:#000; border-color:var(--border); box-shadow:none; }
+    .bpq .btn[disabled] { opacity:.6; cursor:not-allowed; transform:none; }
+    .bpq .btn:focus-visible { outline:3px solid var(--accent); outline-offset: 2px; }
+
+    /* Progress */
+    .bpq .progress { height:4px; background:#eee; border-radius:999px; overflow:hidden; }
+    .bpq .bar { height:100%; width:0%; background:var(--accent); transition: width .25s ease; }
+
+    /* Question */
+    .bpq .qwrap { padding:18px 0; }
+    .bpq .q { font-size: clamp(1.06rem, 1rem + 0.7vw, 1.35rem); line-height:1.45; margin-bottom:14px; letter-spacing:.1px; }
+    @media (min-width: 700px){ .bpq .q { font-size:1.25rem; } }
+
+    /* Answers */
+    .bpq .answers { display:grid; gap:12px; }
+    .bpq .opt { display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:14px 16px; min-height:56px; background:#fff; border:1px solid var(--border); border-radius:16px; font-weight:600; cursor:pointer; transition: background .2s ease, border-color .2s ease, transform .06s ease; }
+    .bpq .opt:hover { transform: translateY(-1px); background:#f7f7f7; border-color:#dcdcdc; }
+    .bpq .opt[aria-disabled="true"] { opacity:.6; cursor:default; transform:none; } .bpq .opt:focus-visible{ outline:2px solid #000; outline-offset:2px; }
+    .bpq .badge { display:inline-grid; place-items:center; width:32px; height:32px; border-radius:999px; border:2px solid #cbd5e1; color:#475569; font-size:.95rem; font-weight:800; flex:0 0 32px; }
+
+    /* States */
+    .bpq .opt.correct { background:#fff; border-color:#000; color:#000; }
+    .bpq .opt.incorrect { background:#fff; border-color:#000; border-style:dashed; color:#000; }
+    .bpq .opt.dim { color:#94a3b8; }
+    .bpq .badge.correct { background:#000; color:#fff; border-color:#000; }
+    .bpq .badge.incorrect { background:transparent; color:#000; border-color:#000; }
+
+    /* Feedback */
+    .bpq .feedback { margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); display:none; }
+    .bpq .feedback.show { display:block; }
+    .bpq .feedback.ok { background:#f7f7f7; border-color:#e5e5e5; color:#111; }
+    .bpq .feedback.no { background:#f7f7f7; border-color:#e5e5e5; color:#111; }
+
+    /* Layout helpers */
+    .bpq .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .bpq .mt-2{ margin-top:12px; } .bpq .mt-3{ margin-top:16px; } .bpq .mt-4{ margin-top:20px; }
+
+    /* Animations (respect reduced motion) */
+    @media (prefers-reduced-motion: no-preference) {
+      .bpq .fade { animation: bpqFade .35s ease both; }
+      @keyframes bpqFade { from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform:none; } }
+    }
+
+    
+    @media (min-width: 700px){ .bpq .screen { padding: 36px; } }
+
+    /* Links in fallback messages */
+    .bpq a { color: var(--accent); text-decoration: underline; }
+  </style>
+
+  <!-- ===== Start Screen ===== -->
+  <section class="screen" data-screen="start">
+    <div class="bpq-container fade">
+      <h1 class="fade" style="font-size:1.75rem; font-weight:400;">Battle of <strong>Britpop</strong></h1>
+      <p class="lead mt-2">Test your knowledge of the legendary 1995 chart battle between Blur and Oasis that defined a generation.</p>
+      <div class="lead mt-2">10 questions • ~5 minutes</div>
+      <button class="btn mt-3" data-action="start">Start Quiz</button>
     </div>
+  </section>
 
-    <script>
-        const quizData = [
-            {
-                question: "Which two bands clashed in the UK singles chart on 14 August 1995?",
-                options: ["Blur and Oasis", "Pulp and Suede", "Radiohead and The Verve"],
-                correct: 0
-            },
-            {
-                question: "What were the titles of the two singles released head to head that day?",
-                options: ["Country House and Roll With It", "Parklife and Wonderwall", "Girls & Boys and Some Might Say"],
-                correct: 0
-            },
-            {
-                question: "Which single claimed the Number 1 spot, and by what margin of sales?",
-                options: ["Oasis – Roll With It, by 30,000 copies", "Blur – Country House, by 58,000 copies", "Take That – Never Forget, by 10,000 copies"],
-                correct: 1
-            },
-            {
-                question: "Who directed the music video for Blur's Country House?",
-                options: ["Damien Hirst", "Guy Ritchie", "Sophie Muller"],
-                correct: 0
-            },
-            {
-                question: "Where was the sleeve photo for Oasis's Roll With It taken?",
-                options: ["Blackpool Pier", "Weston-super-Mare", "Brighton Beach"],
-                correct: 1
-            },
-            {
-                question: "Which Blur band member wore an Oasis T-shirt on Top of the Pops to mark their victory?",
-                options: ["Damon Albarn", "Alex James", "Graham Coxon"],
-                correct: 1
-            },
-            {
-                question: "What pricing strategy gave Blur an advantage in the chart race?",
-                options: ["Selling CD singles for £1.99 in major chains", "Giving away free copies with NME", "Including posters inside every cassette"],
-                correct: 0
-            },
-            {
-                question: "Which B-side on the Roll With It single is now considered one of Noel Gallagher's finest songs?",
-                options: ["Rockin' Chair", "Talk Tonight", "Acquiesce"],
-                correct: 1
-            },
-            {
-                question: "Which presenter introduced Blur's performance of Country House on Top of the Pops?",
-                options: ["Chris Evans", "Jarvis Cocker", "Jo Whiley"],
-                correct: 1
-            },
-            {
-                question: "What album did Oasis release just weeks later that went on to define mid-90s rock worldwide?",
-                options: ["(What's the Story) Morning Glory?", "Be Here Now", "Definitely Maybe"],
-                correct: 0
-            }
-        ];
+  <!-- ===== Question Screen ===== -->
+  <section class="screen" data-screen="question" hidden>
+    <div class="bpq-container">
+      <div class="row mt-2" aria-hidden="false">
+        <div class="lead"><strong>Question <span data-ref="current-q">1</span></strong> of <span data-ref="total-q">10</span></div>
+        <div class="lead"><span data-ref="score">0</span>/<span data-ref="total-q">10</span> correct</div>
+      </div>
+      <div class="progress mt-2" aria-hidden="true"><div class="bar" data-ref="bar" style="width:10%"></div></div>
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let selectedAnswer = null;
+      <div class="qwrap">
+        <h2 class="q" data-ref="question"></h2>
+        <div class="answers" data-ref="answers" role="group" aria-label="Answer choices"></div>
+        <div class="feedback mt-3" data-ref="feedback" role="status" aria-live="polite"></div>
+        <button class="btn mt-3" data-action="next" hidden>Continue</button>
+      </div>
+    </div>
+  </section>
 
-        function startQuiz() {
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('question-screen').classList.remove('hidden');
-            currentQuestionIndex = 0;
-            score = 0;
-            showQuestion();
-        }
+  <!-- ===== Results Screen ===== -->
+  <section class="screen" data-screen="results" hidden>
+    <div class="bpq-container fade">
+      <h1 style="font-size:1.75rem; font-weight:400;">Quiz <strong>Complete</strong></h1>
+      <div class="mt-3" style="font-size:2rem; font-weight:300;">
+        <span data-ref="final">0</span><span class="lead">/<span data-ref="total-q">10</span></span>
+      </div>
+      <p class="lead" data-ref="message"></p>
+      <div class="row mt-3" style="flex-wrap:wrap; gap:10px;">
+        <button class="btn" data-action="restart">Try Again</button>
+        <button class="btn secondary" data-action="share">Share Results</button>
+      </div>
+      <p class="lead mt-3" style="font-size:.9rem;">Tip: If system share isn’t available, your score will be copied to clipboard.</p>
+    </div>
+  </section>
 
-        function showQuestion() {
-            const question = quizData[currentQuestionIndex];
-            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
-            
-            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
-            document.getElementById('current-score').textContent = score;
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('question-text').textContent = question.question;
-            
-            const answersContainer = document.getElementById('answers-container');
-            answersContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'option-button w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-xl font-medium text-gray-900 border border-transparent hover:border-gray-200';
-                button.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center text-xs font-semibold text-gray-500">
-                            ${String.fromCharCode(65 + index)}
-                        </div>
-                        <span>${option}</span>
-                    </div>
-                `;
-                button.onclick = () => selectAnswer(index, button);
-                answersContainer.appendChild(button);
-            });
-            
-            document.getElementById('feedback').classList.add('hidden');
-            document.getElementById('next-button').classList.add('hidden');
-            selectedAnswer = null;
-        }
+  <script>
+    (function(){
+      // ===== State =====
+      const data = [
+        { q:"Which two bands clashed in the UK singles chart on 14 August 1995?", a:["Blur and Oasis","Pulp and Suede","Radiohead and The Verve"], c:0 },
+        { q:"What were the titles of the two singles released head to head that day?", a:["Country House and Roll With It","Parklife and Wonderwall","Girls & Boys and Some Might Say"], c:0 },
+        { q:"Which single claimed the Number 1 spot, and by what margin of sales?", a:["Oasis – Roll With It, by 30,000 copies","Blur – Country House, by 58,000 copies","Take That – Never Forget, by 10,000 copies"], c:1 },
+        { q:"Who directed the music video for Blur's Country House?", a:["Damien Hirst","Guy Ritchie","Sophie Muller"], c:0 },
+        { q:"Where was the sleeve photo for Oasis's Roll With It taken?", a:["Blackpool Pier","Weston-super-Mare","Brighton Beach"], c:1 },
+        { q:"Which Blur band member wore an Oasis T-shirt on Top of the Pops to mark their victory?", a:["Damon Albarn","Alex James","Graham Coxon"], c:1 },
+        { q:"What pricing strategy gave Blur an advantage in the chart race?", a:["Selling CD singles for £1.99 in major chains","Giving away free copies with NME","Including posters inside every cassette"], c:0 },
+        { q:"Which B-side on the Roll With It single is now considered one of Noel Gallagher's finest songs?", a:["Rockin' Chair","Talk Tonight","Acquiesce"], c:1 },
+        { q:"Which presenter introduced Blur's performance of Country House on Top of the Pops?", a:["Chris Evans","Jarvis Cocker","Jo Whiley"], c:1 },
+        { q:"What album did Oasis release just weeks later that went on to define mid-90s rock worldwide?", a:["(What's the Story) Morning Glory?","Be Here Now","Definitely Maybe"], c:0 }
+      ];
 
-        function selectAnswer(answerIndex, buttonElement) {
-            if (selectedAnswer !== null) return;
-            
-            selectedAnswer = answerIndex;
-            const question = quizData[currentQuestionIndex];
-            const isCorrect = answerIndex === question.correct;
-            
-            if (isCorrect) {
-                score++;
-                document.getElementById('current-score').textContent = score;
-            }
-            
-            const buttons = document.querySelectorAll('#answers-container button');
-            buttons.forEach((btn, index) => {
-                const circle = btn.querySelector('div div');
-                if (index === question.correct) {
-                    btn.className = 'option-button w-full text-left p-3 bg-green-50 rounded-xl font-medium text-green-900 border-2 border-green-200';
-                    circle.className = 'w-6 h-6 rounded-full bg-green-500 mr-3 flex items-center justify-center text-xs font-semibold text-white';
-                    circle.textContent = String.fromCharCode(65 + index);
-                } else if (index === answerIndex && !isCorrect) {
-                    btn.className = 'option-button w-full text-left p-3 bg-red-50 rounded-xl font-medium text-red-900 border-2 border-red-200';
-                    circle.className = 'w-6 h-6 rounded-full bg-red-500 mr-3 flex items-center justify-center text-xs font-semibold text-white';
-                    circle.textContent = String.fromCharCode(65 + index);
-                } else {
-                    btn.className = 'option-button w-full text-left p-3 bg-gray-50 rounded-xl font-medium text-gray-400 border border-gray-200 opacity-60';
-                }
-                btn.onclick = null;
-            });
-            
-            const feedback = document.getElementById('feedback');
-            const feedbackText = document.getElementById('feedback-text');
-            if (isCorrect) {
-                feedback.querySelector('div').className = 'p-3 rounded-xl bg-green-50 border border-green-200';
-                feedbackText.textContent = 'Correct! Well done.';
-                feedbackText.className = 'text-sm font-medium text-green-800';
-            } else {
-                feedback.querySelector('div').className = 'p-3 rounded-xl bg-red-50 border border-red-200';
-                feedbackText.textContent = `Incorrect. The correct answer is: ${question.options[question.correct]}`;
-                feedbackText.className = 'text-sm font-medium text-red-800';
-            }
-            feedback.classList.remove('hidden');
-            
-            const nextButton = document.getElementById('next-button');
-            if (currentQuestionIndex === quizData.length - 1) {
-                nextButton.textContent = 'View Results';
-                nextButton.onclick = showResults;
-            }
-            nextButton.classList.remove('hidden');
-        }
+      const root = document.getElementById('britpop-quiz');
+      const $ = (sel) => root.querySelector(sel);
+      const $$ = (sel) => Array.from(root.querySelectorAll(sel));
 
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) {
-                showQuestion();
-            } else {
-                showResults();
-            }
-        }
+      // Cache refs
+      const screens = {
+        start: root.querySelector('[data-screen="start"]'),
+        question: root.querySelector('[data-screen="question"]'),
+        results: root.querySelector('[data-screen="results"]')
+      };
+      $$("[data-ref='total-q']").forEach(el=>el.textContent = String(data.length));
 
-        function showResults() {
-            document.getElementById('question-screen').classList.add('hidden');
-            document.getElementById('results-screen').classList.remove('hidden');
-            
-            document.getElementById('final-score').textContent = score;
-            
-            const percentage = (score / 10) * 100;
-            let message = '';
-            
-            if (percentage >= 90) {
-                message = 'Outstanding! You\'re a true Britpop expert.';
-            } else if (percentage >= 70) {
-                message = 'Excellent work! You know your 90s music history.';
-            } else if (percentage >= 50) {
-                message = 'Good effort! Time to dive deeper into Britpop.';
-            } else {
-                message = 'Keep exploring this amazing era of British music.';
-            }
-            
-            document.getElementById('score-message').textContent = message;
-        }
+      const refs = {
+        currentQ: $('[data-ref="current-q"]'),
+        score: $('[data-ref="score"]'),
+        bar: $('[data-ref="bar"]'),
+        qText: $('[data-ref="question"]'),
+        answers: $('[data-ref="answers"]'),
+        feedback: $('[data-ref="feedback"]'),
+        nextBtn: $('[data-action="next"]'),
+        final: $('[data-ref="final"]'),
+        message: $('[data-ref="message"]')
+      };
 
-        function restartQuiz() {
-            document.getElementById('results-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-            currentQuestionIndex = 0;
-            score = 0;
-            selectedAnswer = null;
-        }
+      let idx = 0, score = 0, picked = null;
 
-        function shareResults() {
-            const percentage = Math.round((score / 10) * 100);
-            const text = `I scored ${score}/10 (${percentage}%) on the Battle of Britpop Quiz! Test your knowledge of the legendary 1995 Blur vs Oasis chart battle.`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Battle of Britpop Quiz Results',
-                    text: text
-                });
-            } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Results copied to clipboard!');
-                });
-            }
-        }
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974bbf65d0246388',t:'MTc1NjEzMTgxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
+      // ===== Screen helpers =====
+      function show(which){
+        Object.values(screens).forEach(s=>s.hidden = true);
+        screens[which].hidden = false;
+      }
+
+      function start(){ idx = 0; score = 0; picked = null; refs.score.textContent = '0'; show('question'); render(); }
+
+      function render(){
+        const q = data[idx];
+        refs.currentQ.textContent = String(idx+1);
+        refs.bar.style.width = `${((idx+1)/data.length)*100}%`;
+        refs.qText.textContent = q.q;
+        refs.feedback.className = 'feedback';
+        refs.feedback.textContent = '';
+        refs.nextBtn.hidden = true;
+
+        // Build answers safely (no innerHTML injection)
+        refs.answers.innerHTML = '';
+        q.a.forEach((label, i)=>{
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'opt';
+          btn.setAttribute('data-index', String(i));
+          btn.setAttribute('aria-disabled','false');
+          btn.setAttribute('tabindex', i===0 ? '0' : '-1');
+
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = String.fromCharCode(65 + i);
+
+          const span = document.createElement('span');
+          span.textContent = label;
+
+          btn.appendChild(badge); btn.appendChild(span);
+          refs.answers.appendChild(btn);
+        });
+      }
+
+      function lockAnswers(correctIdx, chosenIdx){
+        const items = $$('.opt');
+        items.forEach((el, i)=>{
+          const badge = el.querySelector('.badge');
+          if(i === correctIdx){ el.classList.add('correct'); badge.classList.add('correct'); }
+          else if(i === chosenIdx){ el.classList.add('incorrect'); badge.classList.add('incorrect'); }
+          else{ el.classList.add('dim'); }
+          el.setAttribute('aria-disabled','true');
+          el.tabIndex = -1;
+        });
+      }
+
+      function onPick(i){
+        if(picked !== null) return;
+        picked = i;
+        const correct = data[idx].c;
+        if(i === correct){ score++; refs.score.textContent = String(score); refs.feedback.className = 'feedback ok show'; refs.feedback.textContent = 'Correct! Nice one.'; }
+        else{ refs.feedback.className = 'feedback no show'; refs.feedback.textContent = `Incorrect. The correct answer is: ${data[idx].a[correct]}`; }
+        lockAnswers(correct, i);
+        refs.nextBtn.textContent = (idx === data.length - 1) ? 'View Results' : 'Continue';
+        refs.nextBtn.hidden = false; refs.nextBtn.focus();
+      }
+
+      function next(){
+        if(idx < data.length - 1){ idx++; picked = null; render();
+          // Move focus to first answer for a11y
+          setTimeout(()=>{ const first = root.querySelector('.opt'); first && first.focus(); }, 0);
+        } else { results(); }
+      }
+
+      function results(){
+        show('results');
+        refs.final.textContent = String(score);
+        const pct = Math.round((score / data.length) * 100);
+        let msg = '';
+        if(pct >= 90) msg = "Outstanding! You're a true Britpop expert.";
+        else if(pct >= 70) msg = 'Excellent work! You know your 90s music history.';
+        else if(pct >= 50) msg = 'Good effort! Time to dive deeper into Britpop.';
+        else msg = 'Keep exploring this amazing era of British music.';
+        refs.message.textContent = msg;
+      }
+
+      function restart(){ show('start'); }
+
+      async function share(){
+        const pct = Math.round((score / data.length) * 100);
+        const text = `I scored ${score}/${data.length} (${pct}%) on the Battle of Britpop Quiz!`;
+        try{
+          if(navigator.share){ await navigator.share({ title:'Battle of Britpop Quiz', text }); return; }
+          if(navigator.clipboard){ await navigator.clipboard.writeText(text); alert('Results copied to clipboard!'); return; }
+          // Fallback
+          window.prompt('Copy your results:', text);
+        }catch(e){ alert('Sharing failed. Your score: '+text); }
+      }
+
+      // Keyboard navigation within answers
+      function onAnswerKeys(e){
+        const items = $$('.opt');
+        const current = document.activeElement;
+        const i = items.indexOf(current);
+        if(i === -1) return;
+        if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){ e.preventDefault(); const n = items[Math.min(i+1, items.length-1)]; n && n.focus(); }
+        else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){ e.preventDefault(); const p = items[Math.max(i-1, 0)]; p && p.focus(); }
+        else if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); const idx = Number(current.getAttribute('data-index')); onPick(idx); }
+      }
+
+      // Event delegation
+      root.addEventListener('click', (e)=>{
+        const t = e.target;
+        const btn = t.closest && t.closest('.opt');
+        if(btn && btn.getAttribute('aria-disabled') !== 'true'){ onPick(Number(btn.getAttribute('data-index'))); return; }
+        const action = t.closest && t.closest('[data-action]');
+        if(!action) return;
+        const act = action.getAttribute('data-action');
+        if(act==='start'){ show('question'); start(); }
+        else if(act==='next'){ next(); }
+        else if(act==='restart'){ restart(); }
+        else if(act==='share'){ share(); }
+      });
+
+      // Init
+      refs.answers.addEventListener('keydown', onAnswerKeys);
+      show('start');
+    })();
+  </script>
+</div>
