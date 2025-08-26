@@ -1,104 +1,79 @@
-<!-- /embeds/britpop-quiz.html -->
-<!-- Self‑contained, Squarespace‑safe. No external CSS/JS deps. Scoped styles. -->
+<!-- britpop-quiz.html — CHILD ONLY (no iframe/embed markup) -->
 <div id="britpop-quiz" class="bpq" aria-live="polite">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
-    /* ===== Scoped variables & base ===== */
-    #britpop-quiz { --bg:#fff; --text:#000; --muted:#4b5563; --border:#e5e5e5; --card:#fff; --accent:#000; --accent-weak:#000; --green:#000; --green-weak:#f5f5f5; --red:#000; --red-weak:#f5f5f5; --radius:14px; --shadow:0 6px 20px rgba(0,0,0,.06); --heading-font: 'Comfortaa', 'Avenir Next', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --body-font: 'Merriweather', Georgia, 'Times New Roman', serif; }
+    /* ===== Vars & base ===== */
+    #britpop-quiz { --bg:#fff; --text:#000; --muted:#4b5563; --border:#e5e5e5; --card:#fff; --accent:#000; --radius:14px; --heading-font:'Comfortaa','Avenir Next',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; --body-font:'Merriweather',Georgia,'Times New Roman',serif; }
+    #britpop-quiz, #britpop-quiz * { box-sizing: border-box; }
+    #britpop-quiz { color:var(--text); font-family:var(--body-font); line-height:1.65; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color:transparent; color-scheme:light; }
 
-    #britpop-quiz *, #britpop-quiz *::before, #britpop-quiz *::after { box-sizing: border-box; }
-    #britpop-quiz { color:var(--text); font-family:var(--body-font); line-height:1.65; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color: transparent; color-scheme: light; }
+    .bpq-container{ width:100%; max-width:min(90ch,92vw,760px); margin:0 auto; padding:clamp(8px,2.5vw,16px); }
+    .bpq h1,.bpq h2{ font-family:var(--heading-font); margin:0; letter-spacing:.2px; font-weight:400; }
+    .bpq h1{ font-size:clamp(1.6rem,1.2rem + 1.2vw,2.2rem); line-height:1.2; }
+    .bpq .screen{ padding: clamp(8px,2.5vw,18px) clamp(10px,3vw,22px) calc(clamp(6px,2vw,12px) + max(env(safe-area-inset-bottom),6px)); }
 
-    .bpq-container { width:100%; max-width: min(90ch, 92vw, 760px); margin:0 auto; padding: clamp(8px, 2.5vw, 16px); }
+    .lead{ color:var(--muted); }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; min-height:44px; border-radius:999px; border:1px solid var(--border); background:#000; color:#fff; font-weight:600; cursor:pointer; transition:transform .08s ease, background .2s ease, border-color .2s ease; font-size:.95rem; }
+    .btn:hover{ transform:translateY(-1px); }
+    .btn.secondary{ background:transparent; color:#000; }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none; }
+    .btn:focus-visible{ outline:3px solid #000; outline-offset:2px; }
 
-    /* Headings */
-    .bpq h1, .bpq h2 { font-family: var(--heading-font); margin:0; letter-spacing:.2px; font-weight:400; }
-    .bpq h1 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height:1.2; }
+    .progress{ height:4px; background:#eee; border-radius:999px; overflow:hidden; }
+    .bar{ height:100%; width:0%; background:#000; transition:width .25s ease; }
 
-    .bpq .screen { padding: clamp(8px, 2.5vw, 18px) clamp(10px, 3vw, 22px) calc(clamp(6px, 2vw, 12px) + max(env(safe-area-inset-bottom), 6px)); }
+    .qwrap{ padding:10px 0; }
+    .q{ font-size:clamp(1.06rem,1rem + .7vw,1.35rem); line-height:1.45; margin-bottom:14px; letter-spacing:.1px; }
 
-    /* Start screen */
-    .bpq .lead { color:var(--muted); }
-    .bpq .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; min-height:44px; border-radius:999px; border:1px solid var(--border); background:#000; color:#fff; font-weight:600; cursor:pointer; transition: transform .08s ease, background .2s ease, border-color .2s ease; box-shadow:none; font-size:0.95rem; }
-    .bpq .btn:hover { transform: translateY(-1px); }
-    .bpq .btn.secondary { background:transparent; color:#000; border-color:var(--border); box-shadow:none; }
-    .bpq .btn[disabled] { opacity:.6; cursor:not-allowed; transform:none; }
-    .bpq .btn:focus-visible { outline:3px solid var(--accent); outline-offset: 2px; }
+    .answers{ display:grid; gap:12px; }
+    .opt{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:14px 16px; min-height:56px; background:#fff; border:1px solid var(--border); border-radius:16px; font-weight:600; cursor:pointer; transition:background .2s ease, border-color .2s ease, transform .06s ease; }
+    .opt:hover{ transform:translateY(-1px); background:#f7f7f7; border-color:#dcdcdc; }
+    .opt[aria-disabled="true"]{ opacity:.6; cursor:default; transform:none; }
+    .opt:focus-visible{ outline:2px solid #000; outline-offset:2px; }
+    .badge{ display:inline-grid; place-items:center; width:32px; height:32px; border-radius:999px; border:2px solid #cbd5e1; color:#475569; font-size:.95rem; font-weight:800; flex:0 0 32px; }
 
-    /* Progress */
-    .bpq .progress { height:4px; background:#eee; border-radius:999px; overflow:hidden; }
-    .bpq .bar { height:100%; width:0%; background:var(--accent); transition: width .25s ease; }
+    .opt.correct{ background:#fff; border-color:#000; color:#000; }
+    .opt.incorrect{ background:#fff; border-color:#000; border-style:dashed; color:#000; }
+    .opt.dim{ color:#94a3b8; }
+    .badge.correct{ background:#000; color:#fff; border-color:#000; }
+    .badge.incorrect{ background:transparent; color:#000; border-color:#000; }
 
-    /* Question */
-    .bpq .qwrap { padding:10px 0; }
-    .bpq .q { font-size: clamp(1.06rem, 1rem + 0.7vw, 1.35rem); line-height:1.45; margin-bottom:14px; letter-spacing:.1px; }
-    @media (min-width: 700px){ .bpq .q { font-size:1.25rem; } }
+    .feedback{ margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); display:none; }
+    .feedback.show{ display:block; }
 
-    /* Answers */
-    .bpq .answers { display:grid; gap:12px; }
-    .bpq .opt { display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:14px 16px; min-height:56px; background:#fff; border:1px solid var(--border); border-radius:16px; font-weight:600; cursor:pointer; transition: background .2s ease, border-color .2s ease, transform .06s ease; }
-    .bpq .opt:hover { transform: translateY(-1px); background:#f7f7f7; border-color:#dcdcdc; }
-    .bpq .opt[aria-disabled="true"] { opacity:.6; cursor:default; transform:none; } .bpq .opt:focus-visible{ outline:2px solid #000; outline-offset:2px; }
-    .bpq .badge { display:inline-grid; place-items:center; width:32px; height:32px; border-radius:999px; border:2px solid #cbd5e1; color:#475569; font-size:.95rem; font-weight:800; flex:0 0 32px; }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .mt-2{ margin-top:12px; } .mt-3{ margin-top:16px; } .mt-4{ margin-top:20px; }
 
-    /* States */
-    .bpq .opt.correct { background:#fff; border-color:#000; color:#000; }
-    .bpq .opt.incorrect { background:#fff; border-color:#000; border-style:dashed; color:#000; }
-    .bpq .opt.dim { color:#94a3b8; }
-    .bpq .badge.correct { background:#000; color:#fff; border-color:#000; }
-    .bpq .badge.incorrect { background:transparent; color:#000; border-color:#000; }
-
-    /* Feedback */
-    .bpq .feedback { margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); display:none; }
-    .bpq .feedback.show { display:block; }
-    .bpq .feedback.ok { background:#f7f7f7; border-color:#e5e5e5; color:#111; }
-    .bpq .feedback.no { background:#f7f7f7; border-color:#e5e5e5; color:#111; }
-
-    /* Layout helpers */
-    .bpq .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .bpq .mt-2{ margin-top:12px; } .bpq .mt-3{ margin-top:16px; } .bpq .mt-4{ margin-top:20px; }
-
-    /* Animations (respect reduced motion) */
-    @media (prefers-reduced-motion: no-preference) {
-      .bpq .fade { animation: bpqFade .35s ease both; }
-      @keyframes bpqFade { from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform:none; } }
+    @media (prefers-reduced-motion:no-preference){ .fade{ animation:bpqFade .35s ease both; } @keyframes bpqFade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} } }
+    @media (min-width:700px){ .screen{ padding:36px; } }
+    @media (max-width:480px){
+      .screen{ padding:6px 8px calc(4px + max(env(safe-area-inset-bottom),4px)); }
+      .bpq-container{ padding:8px; }
+      h1{ font-size:1.5rem; }
+      .q{ margin-bottom:10px; }
+      .row{ flex-direction:column; align-items:flex-start; gap:6px; }
+      .progress{ height:3px; }
+      .answers{ gap:10px; }
+      .opt{ min-height:48px; padding:12px 12px; }
+      .badge{ width:26px; height:26px; }
+      .mt-3{ margin-top:12px; }
     }
-
-    
-    @media (min-width: 700px){ .bpq .screen { padding: 36px; } }
-
-    /* Links in fallback messages */
-    .bpq a { color: var(--accent); text-decoration: underline; }
-
-    /* Mobile compaction */
-    @media (max-width: 480px){
-      .bpq .screen { padding: 6px 8px calc(4px + max(env(safe-area-inset-bottom), 4px)); }
-      .bpq .bpq-container { padding: 8px; }
-      .bpq h1 { font-size: 1.5rem; }
-      .bpq .q { margin-bottom: 10px; }
-      .bpq .row { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .bpq .progress { height: 3px; }
-      .bpq .answers { gap: 10px; }
-      .bpq .opt { min-height: 48px; padding: 12px 12px; }
-      .bpq .badge { width: 26px; height: 26px; }
-      .bpq .mt-3{ margin-top: 12px; }
-    }
-  /* Results screen tighter top spacing */
-    .bpq [data-screen="results"] .bpq-container { padding-top: clamp(4px, 1.5vw, 10px); }
-    .bpq [data-screen="results"] .mt-3 { margin-top: 10px; }
+    /* Results tighter top spacing */
+    [data-screen="results"] .bpq-container{ padding-top:clamp(4px,1.5vw,10px); }
+    [data-screen="results"] .mt-3{ margin-top:10px; }
   </style>
 
-  <!-- ===== Start Screen ===== -->
+  <!-- Start Screen -->
   <section class="screen" data-screen="start">
     <div class="bpq-container fade">
-      <h1 class="fade" style="font-size:1.75rem; font-weight:400;">Battle of <strong>Britpop</strong></h1>
+      <h1 class="fade">Battle of <strong>Britpop</strong></h1>
       <p class="lead mt-2">Test your knowledge of the legendary 1995 chart battle between Blur and Oasis that defined a generation.</p>
       <div class="lead mt-2">10 questions • ~5 minutes</div>
       <button class="btn mt-3" data-action="start">Start Quiz</button>
     </div>
   </section>
 
-  <!-- ===== Question Screen ===== -->
+  <!-- Question Screen -->
   <section class="screen" data-screen="question" hidden>
     <div class="bpq-container">
       <div class="row mt-2" aria-hidden="false">
@@ -116,10 +91,10 @@
     </div>
   </section>
 
-  <!-- ===== Results Screen ===== -->
+  <!-- Results Screen -->
   <section class="screen" data-screen="results" hidden>
     <div class="bpq-container fade">
-      <h1 style="font-size:1.75rem; font-weight:400;">Quiz <strong>Complete</strong></h1>
+      <h1>Quiz <strong>Complete</strong></h1>
       <div class="mt-3" style="font-size:2rem; font-weight:300;">
         <span data-ref="final">0</span><span class="lead">/<span data-ref="total-q">10</span></span>
       </div>
@@ -134,7 +109,6 @@
 
   <script>
     (function(){
-      // ===== State =====
       const data = [
         { q:"Which two bands clashed in the UK singles chart on 14 August 1995?", a:["Blur and Oasis","Pulp and Suede","Radiohead and The Verve"], c:0 },
         { q:"What were the titles of the two singles released head to head that day?", a:["Country House and Roll With It","Parklife and Wonderwall","Girls & Boys and Some Might Say"], c:0 },
@@ -149,38 +123,18 @@
       ];
 
       const root = document.getElementById('britpop-quiz');
-      const $ = (sel) => root.querySelector(sel);
-      const $$ = (sel) => Array.from(root.querySelectorAll(sel));
+      const $ = sel => root.querySelector(sel);
+      const $$ = sel => Array.from(root.querySelectorAll(sel));
 
-      // Cache refs
-      const screens = {
-        start: root.querySelector('[data-screen="start"]'),
-        question: root.querySelector('[data-screen="question"]'),
-        results: root.querySelector('[data-screen="results"]')
-      };
-      $$("[data-ref='total-q']").forEach(el=>el.textContent = String(data.length));
+      const screens = { start: $('[data-screen="start"]'), question: $('[data-screen="question"]'), results: $('[data-screen="results"]') };
+      $$('[data-ref="total-q"]').forEach(el => el.textContent = String(data.length));
 
-      const refs = {
-        currentQ: $('[data-ref="current-q"]'),
-        score: $('[data-ref="score"]'),
-        bar: $('[data-ref="bar"]'),
-        qText: $('[data-ref="question"]'),
-        answers: $('[data-ref="answers"]'),
-        feedback: $('[data-ref="feedback"]'),
-        nextBtn: $('[data-action="next"]'),
-        final: $('[data-ref="final"]'),
-        message: $('[data-ref="message"]')
-      };
+      const refs = { currentQ: $('[data-ref="current-q"]'), score: $('[data-ref="score"]'), bar: $('[data-ref="bar"]'), qText: $('[data-ref="question"]'), answers: $('[data-ref="answers"]'), feedback: $('[data-ref="feedback"]'), nextBtn: $('[data-action="next"]'), final: $('[data-ref="final"]'), message: $('[data-ref="message"]') };
 
       let idx = 0, score = 0, picked = null;
 
-      // ===== Screen helpers =====
-      function show(which){
-        Object.values(screens).forEach(s=>s.hidden = true);
-        screens[which].hidden = false;
-      }
-
-      function start(){ idx = 0; score = 0; picked = null; refs.score.textContent = '0'; show('question'); render(); }
+      function show(which){ Object.values(screens).forEach(s => s.hidden = true); screens[which].hidden = false; }
+      function start(){ idx=0; score=0; picked=null; refs.score.textContent='0'; show('question'); render(); }
 
       function render(){
         const q = data[idx];
@@ -189,193 +143,104 @@
         refs.qText.textContent = q.q;
         refs.feedback.className = 'feedback';
         refs.feedback.textContent = '';
-        refs.nextBtn.hidden = true; refs.nextBtn.style.display = 'none'; refs.nextBtn.disabled = true; refs.nextBtn.setAttribute('aria-disabled','true');
-
-        // Build answers safely (no innerHTML injection)
+        refs.nextBtn.hidden = true; refs.nextBtn.style.display='none'; refs.nextBtn.disabled=true; refs.nextBtn.setAttribute('aria-disabled','true');
         refs.answers.innerHTML = '';
-        q.a.forEach((label, i)=>{
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'opt';
-          btn.setAttribute('data-index', String(i));
-          btn.setAttribute('aria-disabled','false');
-          btn.setAttribute('tabindex', i===0 ? '0' : '-1');
-
-          const badge = document.createElement('span');
-          badge.className = 'badge';
-          badge.textContent = String.fromCharCode(65 + i);
-
-          const span = document.createElement('span');
-          span.textContent = label;
-
+        q.a.forEach((label,i)=>{
+          const btn=document.createElement('button');
+          btn.type='button'; btn.className='opt'; btn.dataset.index=String(i); btn.setAttribute('aria-disabled','false'); btn.tabIndex=(i===0?0:-1);
+          const badge=document.createElement('span'); badge.className='badge'; badge.textContent=String.fromCharCode(65+i);
+          const span=document.createElement('span'); span.textContent=label;
           btn.appendChild(badge); btn.appendChild(span);
           refs.answers.appendChild(btn);
         });
       }
 
       function lockAnswers(correctIdx, chosenIdx){
-        const items = $$('.opt');
-        items.forEach((el, i)=>{
-          const badge = el.querySelector('.badge');
-          if(i === correctIdx){ el.classList.add('correct'); badge.classList.add('correct'); }
-          else if(i === chosenIdx){ el.classList.add('incorrect'); badge.classList.add('incorrect'); }
-          else{ el.classList.add('dim'); }
-          el.setAttribute('aria-disabled','true');
-          el.tabIndex = -1;
-        });
+        $$('.opt').forEach((el,i)=>{ const badge=el.querySelector('.badge'); if(i===correctIdx){ el.classList.add('correct'); badge.classList.add('correct'); } else if(i===chosenIdx){ el.classList.add('incorrect'); badge.classList.add('incorrect'); } else { el.classList.add('dim'); } el.setAttribute('aria-disabled','true'); el.tabIndex=-1; });
       }
 
       function onPick(i){
-        if(picked !== null) return;
-        picked = i;
-        const correct = data[idx].c;
-        if(i === correct){ score++; refs.score.textContent = String(score); refs.feedback.className = 'feedback ok show'; refs.feedback.textContent = 'Correct! Nice one.'; }
-        else{ refs.feedback.className = 'feedback no show'; refs.feedback.textContent = `Incorrect. The correct answer is: ${data[idx].a[correct]}`; }
-        lockAnswers(correct, i);
-        refs.nextBtn.textContent = (idx === data.length - 1) ? 'View Results' : 'Continue';
-        refs.nextBtn.hidden = false; refs.nextBtn.style.display = ''; refs.nextBtn.disabled = false; refs.nextBtn.removeAttribute('aria-disabled'); refs.nextBtn.focus();
+        if(picked!==null) return;
+        picked=i; const correct=data[idx].c;
+        if(i===correct){ score++; refs.score.textContent=String(score); refs.feedback.className='feedback ok show'; refs.feedback.textContent='Correct! Nice one.'; }
+        else { refs.feedback.className='feedback no show'; refs.feedback.textContent=`Incorrect. The correct answer is: ${data[idx].a[correct]}`; }
+        lockAnswers(correct,i);
+        refs.nextBtn.textContent = (idx===data.length-1) ? 'View Results' : 'Continue';
+        refs.nextBtn.hidden=false; refs.nextBtn.style.display=''; refs.nextBtn.disabled=false; refs.nextBtn.removeAttribute('aria-disabled'); refs.nextBtn.focus();
       }
 
       function next(){
-        if(picked === null) return; // Block advance until an answer is picked
-        if(idx < data.length - 1){
-          idx++; picked = null; render();
-          setTimeout(()=>{ const first = root.querySelector('.opt'); first && first.focus(); }, 0);
-        } else {
-          results();
-        }
-      } else { results(); }
-      
+        if(picked===null) return; // block until an answer is chosen
+        if(idx < data.length - 1){ idx++; picked=null; render(); setTimeout(()=>{ const first=root.querySelector('.opt'); first&&first.focus(); },0); }
+        else { results(); }
+      }
 
       function results(){
         show('results');
-        refs.final.textContent = String(score);
-        const pct = Math.round((score / data.length) * 100);
-        let msg = '';
-        if(pct >= 90) msg = "Outstanding! You're a true Britpop expert.";
-        else if(pct >= 70) msg = 'Excellent work! You know your 90s music history.';
-        else if(pct >= 50) msg = 'Good effort! Time to dive deeper into Britpop.';
-        else msg = 'Keep exploring this amazing era of British music.';
-        refs.message.textContent = msg;
+        refs.final.textContent=String(score);
+        const pct=Math.round((score/data.length)*100);
+        let msg='';
+        if(pct>=90) msg = "Outstanding! You're a true Britpop expert.";
+        else if(pct>=70) msg='Excellent work! You know your 90s music history.';
+        else if(pct>=50) msg='Good effort! Time to dive deeper into Britpop.';
+        else msg='Keep exploring this amazing era of British music.';
+        refs.message.textContent=msg;
       }
 
       function restart(){ show('start'); }
 
       function tweet(){
-        const pct = Math.round((score / data.length) * 100);
-        const text = `I scored ${score else {
-              const ta = document.createElement('textarea'); ta.value = fallback; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Score copied to clipboard!');
-            }
-          }catch(_){ window.prompt('Copy your results:', text + ' ' + url); }
+        const pct=Math.round((score/data.length)*100);
+        const text=`I scored ${score}/${data.length} (${pct}%) on the Battle of Britpop Quiz!`;
+        const url='https://audi0ech0es.github.io/Battle-of-Britpop-Quiz/';
+        const intent='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url);
+        const w=550,h=420; const y=(window.top===window.self)?(screen.height-h)/2:100; const x=(window.top===window.self)?(screen.width-w)/2:100;
+        const win=window.open(intent,'_blank',`noopener,noreferrer,width=${w},height=${h},left=${x},top=${y}`);
+        if(!win){ // fallback: copy
+          try{
+            const fallback=text+' '+url;
+            if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(fallback).then(()=>alert('Score copied to clipboard!')); }
+            else{ const ta=document.createElement('textarea'); ta.value=fallback; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Score copied to clipboard!'); }
+          }catch(_){ window.prompt('Copy your results:', text+' '+url); }
         }
-      }catch(_){}
-        // Clipboard API in secure contexts
-        try{
-          if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); alert('Results copied to clipboard!'); return; }
-        }catch(_){}
-        // execCommand fallback (works in many iframes)
-        try{
-          const ta = document.createElement('textarea');
-          ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
-          document.body.appendChild(ta); ta.select();
-          const ok = document.execCommand('copy');
-          document.body.removeChild(ta);
-          if(ok){ alert('Results copied to clipboard!'); return; }
-        }catch(_){}
-        // Last resort prompt
-        window.prompt('Copy your results:', text);
-      catch(e){ alert('Sharing failed. Your score: '+text); }
       }
 
-      // Keyboard navigation within answers
       function onAnswerKeys(e){
-        const items = $$('.opt');
-        const current = document.activeElement;
-        const i = items.indexOf(current);
-        if(i === -1) return;
-        if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){ e.preventDefault(); const n = items[Math.min(i+1, items.length-1)]; n && n.focus(); }
-        else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){ e.preventDefault(); const p = items[Math.max(i-1, 0)]; p && p.focus(); }
-        else if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); const idx = Number(current.getAttribute('data-index')); onPick(idx); }
+        const items=$$('.opt'); const current=document.activeElement; const i=items.indexOf(current); if(i===-1) return;
+        if(e.key==='ArrowDown'||e.key==='ArrowRight'){ e.preventDefault(); const n=items[Math.min(i+1,items.length-1)]; n&&n.focus(); }
+        else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){ e.preventDefault(); const p=items[Math.max(i-1,0)]; p&&p.focus(); }
+        else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); const idx=Number(current.getAttribute('data-index')); onPick(idx); }
       }
 
-      // Event delegation
-      root.addEventListener('click', (e)=>{
-        const t = e.target;
-        const btn = t.closest && t.closest('.opt');
-        if(btn && btn.getAttribute('aria-disabled') !== 'true'){ onPick(Number(btn.getAttribute('data-index'))); return; }
-        const action = t.closest && t.closest('[data-action]');
-        if(!action) return;
-        const act = action.getAttribute('data-action');
+      root.addEventListener('click',(e)=>{
+        const t=e.target;
+        const ans=t.closest && t.closest('.opt'); if(ans && ans.getAttribute('aria-disabled')!=='true'){ onPick(Number(ans.getAttribute('data-index'))); return; }
+        const action=t.closest && t.closest('[data-action]'); if(!action) return; const act=action.getAttribute('data-action');
         if(act==='start'){ show('question'); start(); }
         else if(act==='next'){ if(refs.nextBtn.disabled) return; next(); }
         else if(act==='restart'){ restart(); }
         else if(act==='tweet'){ tweet(); }
       });
 
-      // Init
       refs.answers.addEventListener('keydown', onAnswerKeys);
       show('start');
     })();
   </script>
-  <!-- Child iframe auto-resizer (send height to parent) -->
+
+  <!-- Child iframe auto-resizer (send height to parent; harmless if not iframed) -->
   <script>
     (function(){
-      var last = 0;
+      var last=0;
       function send(){
-        var h = Math.max(
-          document.documentElement.scrollHeight,
-          document.body ? document.body.scrollHeight : 0
-        );
-        if(h !== last){
-          last = h;
-          parent.postMessage({ type:'bpq:height', height: h }, '*');
-        }
+        var h=Math.max(document.documentElement.scrollHeight, document.body?document.body.scrollHeight:0);
+        if(h!==last){ last=h; parent.postMessage({ type:'bpq:height', height:h }, '*'); }
       }
-      function debounce(fn, ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn, ms); }; }
-      if('ResizeObserver' in window){
-        var ro = new ResizeObserver(debounce(send, 60));
-        ro.observe(document.documentElement);
-        if(document.body) ro.observe(document.body);
-      }
+      function debounce(fn,ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn,ms); }; }
+      if('ResizeObserver' in window){ var ro=new ResizeObserver(debounce(send,60)); ro.observe(document.documentElement); if(document.body) ro.observe(document.body); }
       window.addEventListener('load', send);
-      window.addEventListener('resize', debounce(send, 100));
-      window.addEventListener('message', function(e){ if(e && e.data && e.data.type === 'bpq:requestHeight') send(); });
-      setTimeout(send, 200);
+      window.addEventListener('resize', debounce(send,100));
+      window.addEventListener('message', function(e){ if(e && e.data && e.data.type==='bpq:requestHeight') send(); });
+      setTimeout(send,200);
     })();
   </script>
 </div>
-
-
-<!-- ========================== -->
-<!-- Squarespace iframe embed   -->
-<!-- Paste the block BELOW into a Squarespace Code block on the page where you want the quiz. -->
-<div id="bpq-embed-wrapper" style="max-width:760px;margin:0 auto;">
-  <iframe
-    id="britpop-quiz-embed"
-    src="https://audi0ech0es.github.io/Battle-of-Britpop-Quiz/"  
-    title="Battle of Britpop Quiz"
-    loading="lazy"
-    style="display:block;width:100%;height:640px;border:0;overflow:hidden;background:#fff;"
-    referrerpolicy="no-referrer-when-downgrade"
-    aria-label="Interactive quiz: Battle of Britpop">
-  </iframe>
-</div>
-<script>
-  (function(){
-    var ORIGIN = 'https://audi0ech0es.github.io'; // ⬅️ CHANGE to the domain hosting britpop-quiz.html
-    var MAX = 2400, MIN = 420; // clamp for safety so the page doesn't jump
-    var iframe = document.getElementById('britpop-quiz-embed');
-    function onMessage(e){
-      if(!e.data || e.data.type !== 'bpq:height') return;
-      if(ORIGIN && e.origin !== ORIGIN) return; // security: only accept from your host
-      if(e.source !== iframe.contentWindow) return;
-      var h = Math.max(MIN, Math.min(MAX, parseInt(e.data.height,10) || MIN));
-      iframe.style.height = h + 'px';
-    }
-    window.addEventListener('message', onMessage, false);
-    // Ask child for its height after load and when navigating between quiz screens
-    iframe.addEventListener('load', function(){
-      if(iframe.contentWindow){ iframe.contentWindow.postMessage({ type:'bpq:requestHeight' }, '*'); }
-    });
-  })();
-</script>
