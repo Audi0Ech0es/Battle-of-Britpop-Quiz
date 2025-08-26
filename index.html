@@ -9,13 +9,13 @@
     #britpop-quiz *, #britpop-quiz *::before, #britpop-quiz *::after { box-sizing: border-box; }
     #britpop-quiz { color:var(--text); font-family:var(--body-font); line-height:1.65; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color: transparent; color-scheme: light; }
 
-    .bpq-container { width:100%; max-width: min(90ch, 92vw, 760px); margin:0 auto; padding: clamp(16px, 4vw, 32px); }
+    .bpq-container { width:100%; max-width: min(90ch, 92vw, 760px); margin:0 auto; padding: clamp(8px, 2.5vw, 16px); }
 
     /* Headings */
     .bpq h1, .bpq h2 { font-family: var(--heading-font); margin:0; letter-spacing:.2px; font-weight:400; }
     .bpq h1 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height:1.2; }
 
-    .bpq .screen { padding: clamp(16px, 4vw, 36px) clamp(14px, 4vw, 36px) calc(clamp(16px, 4vw, 36px) + env(safe-area-inset-bottom)); }
+    .bpq .screen { padding: clamp(8px, 2.5vw, 18px) clamp(10px, 3vw, 22px) calc(clamp(6px, 2vw, 12px) + max(env(safe-area-inset-bottom), 6px)); }
 
     /* Start screen */
     .bpq .lead { color:var(--muted); }
@@ -30,7 +30,7 @@
     .bpq .bar { height:100%; width:0%; background:var(--accent); transition: width .25s ease; }
 
     /* Question */
-    .bpq .qwrap { padding:18px 0; }
+    .bpq .qwrap { padding:10px 0; }
     .bpq .q { font-size: clamp(1.06rem, 1rem + 0.7vw, 1.35rem); line-height:1.45; margin-bottom:14px; letter-spacing:.1px; }
     @media (min-width: 700px){ .bpq .q { font-size:1.25rem; } }
 
@@ -69,6 +69,23 @@
 
     /* Links in fallback messages */
     .bpq a { color: var(--accent); text-decoration: underline; }
+
+    /* Mobile compaction */
+    @media (max-width: 480px){
+      .bpq .screen { padding: 6px 8px calc(4px + max(env(safe-area-inset-bottom), 4px)); }
+      .bpq .bpq-container { padding: 8px; }
+      .bpq h1 { font-size: 1.5rem; }
+      .bpq .q { margin-bottom: 10px; }
+      .bpq .row { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .bpq .progress { height: 3px; }
+      .bpq .answers { gap: 10px; }
+      .bpq .opt { min-height: 48px; padding: 12px 12px; }
+      .bpq .badge { width: 26px; height: 26px; }
+      .bpq .mt-3{ margin-top: 12px; }
+    }
+  /* Results screen tighter top spacing */
+    .bpq [data-screen="results"] .bpq-container { padding-top: clamp(4px, 1.5vw, 10px); }
+    .bpq [data-screen="results"] .mt-3 { margin-top: 10px; }
   </style>
 
   <!-- ===== Start Screen ===== -->
@@ -109,9 +126,9 @@
       <p class="lead" data-ref="message"></p>
       <div class="row mt-3" style="flex-wrap:wrap; gap:10px;">
         <button class="btn" data-action="restart">Try Again</button>
-        <button class="btn secondary" data-action="share">Share Results</button>
+        <button class="btn secondary" data-action="tweet">Tweet Results</button>
       </div>
-      <p class="lead mt-3" style="font-size:.9rem;">Tip: If system share isn’t available, your score will be copied to clipboard.</p>
+      <p class="lead mt-3" style="font-size:.9rem;">Tip: Tweet opens in a new tab. You can also copy your score.</p>
     </div>
   </section>
 
@@ -172,7 +189,7 @@
         refs.qText.textContent = q.q;
         refs.feedback.className = 'feedback';
         refs.feedback.textContent = '';
-        refs.nextBtn.hidden = true;
+        refs.nextBtn.hidden = true; refs.nextBtn.style.display = 'none'; refs.nextBtn.disabled = true; refs.nextBtn.setAttribute('aria-disabled','true');
 
         // Build answers safely (no innerHTML injection)
         refs.answers.innerHTML = '';
@@ -216,15 +233,19 @@
         else{ refs.feedback.className = 'feedback no show'; refs.feedback.textContent = `Incorrect. The correct answer is: ${data[idx].a[correct]}`; }
         lockAnswers(correct, i);
         refs.nextBtn.textContent = (idx === data.length - 1) ? 'View Results' : 'Continue';
-        refs.nextBtn.hidden = false; refs.nextBtn.focus();
+        refs.nextBtn.hidden = false; refs.nextBtn.style.display = ''; refs.nextBtn.disabled = false; refs.nextBtn.removeAttribute('aria-disabled'); refs.nextBtn.focus();
       }
 
       function next(){
-        if(idx < data.length - 1){ idx++; picked = null; render();
-          // Move focus to first answer for a11y
+        if(picked === null) return; // Block advance until an answer is picked
+        if(idx < data.length - 1){
+          idx++; picked = null; render();
           setTimeout(()=>{ const first = root.querySelector('.opt'); first && first.focus(); }, 0);
-        } else { results(); }
-      }
+        } else {
+          results();
+        }
+      } else { results(); }
+      
 
       function results(){
         show('results');
@@ -240,15 +261,30 @@
 
       function restart(){ show('start'); }
 
-      async function share(){
+      function tweet(){
         const pct = Math.round((score / data.length) * 100);
-        const text = `I scored ${score}/${data.length} (${pct}%) on the Battle of Britpop Quiz!`;
+        const text = `I scored ${score else {
+              const ta = document.createElement('textarea'); ta.value = fallback; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Score copied to clipboard!');
+            }
+          }catch(_){ window.prompt('Copy your results:', text + ' ' + url); }
+        }
+      }catch(_){}
+        // Clipboard API in secure contexts
         try{
-          if(navigator.share){ await navigator.share({ title:'Battle of Britpop Quiz', text }); return; }
-          if(navigator.clipboard){ await navigator.clipboard.writeText(text); alert('Results copied to clipboard!'); return; }
-          // Fallback
-          window.prompt('Copy your results:', text);
-        }catch(e){ alert('Sharing failed. Your score: '+text); }
+          if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); alert('Results copied to clipboard!'); return; }
+        }catch(_){}
+        // execCommand fallback (works in many iframes)
+        try{
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta); ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if(ok){ alert('Results copied to clipboard!'); return; }
+        }catch(_){}
+        // Last resort prompt
+        window.prompt('Copy your results:', text);
+      catch(e){ alert('Sharing failed. Your score: '+text); }
       }
 
       // Keyboard navigation within answers
@@ -271,9 +307,9 @@
         if(!action) return;
         const act = action.getAttribute('data-action');
         if(act==='start'){ show('question'); start(); }
-        else if(act==='next'){ next(); }
+        else if(act==='next'){ if(refs.nextBtn.disabled) return; next(); }
         else if(act==='restart'){ restart(); }
-        else if(act==='share'){ share(); }
+        else if(act==='tweet'){ tweet(); }
       });
 
       // Init
@@ -281,4 +317,65 @@
       show('start');
     })();
   </script>
+  <!-- Child iframe auto-resizer (send height to parent) -->
+  <script>
+    (function(){
+      var last = 0;
+      function send(){
+        var h = Math.max(
+          document.documentElement.scrollHeight,
+          document.body ? document.body.scrollHeight : 0
+        );
+        if(h !== last){
+          last = h;
+          parent.postMessage({ type:'bpq:height', height: h }, '*');
+        }
+      }
+      function debounce(fn, ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn, ms); }; }
+      if('ResizeObserver' in window){
+        var ro = new ResizeObserver(debounce(send, 60));
+        ro.observe(document.documentElement);
+        if(document.body) ro.observe(document.body);
+      }
+      window.addEventListener('load', send);
+      window.addEventListener('resize', debounce(send, 100));
+      window.addEventListener('message', function(e){ if(e && e.data && e.data.type === 'bpq:requestHeight') send(); });
+      setTimeout(send, 200);
+    })();
+  </script>
 </div>
+
+
+<!-- ========================== -->
+<!-- Squarespace iframe embed   -->
+<!-- Paste the block BELOW into a Squarespace Code block on the page where you want the quiz. -->
+<div id="bpq-embed-wrapper" style="max-width:760px;margin:0 auto;">
+  <iframe
+    id="britpop-quiz-embed"
+    src="https://audi0ech0es.github.io/Battle-of-Britpop-Quiz/"  
+    title="Battle of Britpop Quiz"
+    loading="lazy"
+    style="display:block;width:100%;height:640px;border:0;overflow:hidden;background:#fff;"
+    referrerpolicy="no-referrer-when-downgrade"
+    aria-label="Interactive quiz: Battle of Britpop">
+  </iframe>
+</div>
+<script>
+  (function(){
+    var ORIGIN = 'https://audi0ech0es.github.io'; // ⬅️ CHANGE to the domain hosting britpop-quiz.html
+    var MAX = 2400, MIN = 420; // clamp for safety so the page doesn't jump
+    var iframe = document.getElementById('britpop-quiz-embed');
+    function onMessage(e){
+      if(!e.data || e.data.type !== 'bpq:height') return;
+      if(ORIGIN && e.origin !== ORIGIN) return; // security: only accept from your host
+      if(e.source !== iframe.contentWindow) return;
+      var h = Math.max(MIN, Math.min(MAX, parseInt(e.data.height,10) || MIN));
+      iframe.style.height = h + 'px';
+    }
+    window.addEventListener('message', onMessage, false);
+    // Ask child for its height after load and when navigating between quiz screens
+    iframe.addEventListener('load', function(){
+      if(iframe.contentWindow){ iframe.contentWindow.postMessage({ type:'bpq:requestHeight' }, '*'); }
+    });
+  })();
+</script>
