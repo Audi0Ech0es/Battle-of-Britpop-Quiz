@@ -1,118 +1,233 @@
-<!-- britpop-quiz.html — CHILD ONLY (no iframe/embed markup) -->
 <div id="britpop-quiz" class="bpq" aria-live="polite">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
-    /* ===== Vars & base ===== */
-    #britpop-quiz { --bg:#fff; --text:#000; --muted:#4b5563; --border:#e5e5e5; --card:#fff; --accent:#000; --radius:14px; --heading-font:'Comfortaa','Avenir Next',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; --body-font:'Merriweather',Georgia,'Times New Roman',serif; }
-    #britpop-quiz, #britpop-quiz * { box-sizing: border-box; }
-    #britpop-quiz { color:var(--text); font-family:var(--body-font); line-height:1.65; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color:transparent; color-scheme:light; }
 
-    .bpq-container{ width:100%; max-width:min(90ch,92vw,760px); margin:0 auto; padding:clamp(8px,2.5vw,16px); }
-    .bpq h1,.bpq h2{ font-family:var(--heading-font); margin:0; letter-spacing:.2px; font-weight:400; }
-    .bpq h1{ font-size:clamp(1.6rem,1.2rem + 1.2vw,2.2rem); line-height:1.2; }
-    .bpq .screen{ padding: clamp(8px,2.5vw,18px) clamp(10px,3vw,22px) 0; }
-
-    .lead{ color:var(--muted); }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; min-height:44px; border-radius:999px; border:1px solid var(--border); background:#000; color:#fff; font-weight:600; cursor:pointer; transition:transform .08s ease, background .2s ease, border-color .2s ease; font-size:.95rem; }
-    .btn:hover{ transform:translateY(-1px); }
-    .btn.secondary{ background:transparent; color:#000; }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none; }
-    .btn:focus-visible{ outline:3px solid #000; outline-offset:2px; }
-
-    .progress{ height:4px; background:#eee; border-radius:999px; overflow:hidden; }
-    .bar{ height:100%; width:0%; background:#000; transition:width .25s ease; }
-
-    .qwrap{ padding:10px 0; }
-    .q{ font-size:clamp(1.06rem,1rem + .7vw,1.35rem); line-height:1.45; margin-bottom:14px; letter-spacing:.1px; }
-
-    .answers{ display:grid; gap:12px; }
-    .opt{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:14px 16px; min-height:56px; background:#fff; border:1px solid var(--border); border-radius:16px; font-weight:600; cursor:pointer; transition:background .2s ease, border-color .2s ease, transform .06s ease; }
-    .opt:hover{ transform:translateY(-1px); background:#f7f7f7; border-color:#dcdcdc; }
-    .opt[aria-disabled="true"]{ opacity:.6; cursor:default; transform:none; }
-    .opt:focus-visible{ outline:2px solid #000; outline-offset:2px; }
-    .badge{ display:inline-grid; place-items:center; width:32px; height:32px; border-radius:999px; border:2px solid #cbd5e1; color:#475569; font-size:.95rem; font-weight:800; flex:0 0 32px; }
-
-    .opt.correct{ background:#fff; border-color:#000; color:#000; }
-    .opt.incorrect{ background:#fff; border-color:#000; border-style:dashed; color:#000; }
-    .opt.dim{ color:#94a3b8; }
-    .badge.correct{ background:#000; color:#fff; border-color:#000; }
-    .badge.incorrect{ background:transparent; color:#000; border-color:#000; }
-
-    .feedback{ margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); display:none; }
-    .feedback.show{ display:block; }
-
-    .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .mt-2{ margin-top:12px; } .mt-3{ margin-top:16px; } .mt-4{ margin-top:20px; }
-
-    @media (prefers-reduced-motion:no-preference){ .fade{ animation:bpqFade .35s ease both; } @keyframes bpqFade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} } }
-    @media (min-width:700px){ .screen{ padding:36px; } }
-    @media (max-width:480px){
-      .screen{ padding: 6px 8px 0; }
-      .bpq-container{ padding:8px; }
-      h1{ font-size:1.5rem; }
-      .q{ margin-bottom:10px; }
-      .row{ flex-direction:column; align-items:flex-start; gap:6px; }
-      .progress{ height:3px; }
-      .answers{ gap:10px; }
-      .opt{ min-height:48px; padding:12px 12px; }
-      .badge{ width:26px; height:26px; }
-      .mt-3{ margin-top:12px; }
+    #britpop-quiz {
+      all: initial;
+      isolation: isolate;
+      display: block;
+      position: relative;
+      padding: 48px 24px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      max-width: 1120px;
+      margin: 0 auto;
+      font-family: 'Merriweather', Georgia, serif;
+      color: #000;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-      h1{ font-size:1.5rem; }
-      .q{ margin-bottom:10px; }
-      .row{ flex-direction:column; align-items:flex-start; gap:6px; }
-      .progress{ height:3px; }
-      .answers{ gap:10px; }
-      .opt{ min-height:48px; padding:12px 12px; }
-      .badge{ width:26px; height:26px; }
-      .mt-3{ margin-top:12px; }
+
+    #britpop-quiz *, #britpop-quiz *::before, #britpop-quiz *::after {
+      all: unset;
+      box-sizing: border-box;
+      font-family: inherit;
+      color: inherit;
     }
-    /* Results tighter top spacing */
-    [data-screen="results"] .bpq-container{ padding-top:clamp(4px,1.5vw,10px); }
-    [data-screen="results"] .mt-3{ margin-top:10px; }
+
+    .bpq .screen { padding: 0; }
+    .bpq .bpq-container {
+      width: 100%;
+      padding: 0 20px;
+      margin: 0 auto;
+      max-width: 1120px;
+    }
+
+    .bpq h1, .bpq h2 {
+      font-family: 'Comfortaa', sans-serif;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .bpq h1 {
+      font-size: clamp(1.8rem, 1.2rem + 1.8vw, 2.5rem);
+      line-height: 1.2;
+    }
+
+    .lead {
+      color: #4b5563;
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      background: black;
+      color: white;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: black;
+      border: 1px solid #e5e5e5;
+    }
+
+    .progress {
+      height: 3px;
+      background: #eee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: #000;
+      transition: width 0.3s ease;
+    }
+
+    .answers {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      border: 1px solid #e5e5e5;
+      padding: 12px 14px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .opt:hover {
+      background: #f9f9f9;
+      border-color: #dcdcdc;
+    }
+
+    .opt[aria-disabled="true"] {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      color: #475569;
+      flex-shrink: 0;
+    }
+
+    .opt.correct {
+      background: #fff;
+      border-color: #000;
+      color: #000;
+    }
+
+    .opt.incorrect {
+      background: #fff;
+      border-color: #000;
+      border-style: dashed;
+      color: #000;
+    }
+
+    .opt.dim {
+      color: #94a3b8;
+    }
+
+    .badge.correct {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .badge.incorrect {
+      background: transparent;
+      color: #000;
+      border-color: #000;
+    }
+
+    .q {
+      font-size: clamp(1.1rem, 1vw + 1rem, 1.4rem);
+      margin-top: 20px;
+    }
+
+    .feedback {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      background: #f9f9f9;
+      font-style: italic;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      #britpop-quiz {
+        padding: 32px 16px;
+      }
+      .bpq .bpq-container {
+        padding: 0 12px;
+      }
+    }
   </style>
 
-  <!-- Start Screen -->
+  <!-- Quiz Screens -->
   <section class="screen" data-screen="start">
     <div class="bpq-container fade">
       <h1 class="fade">Battle of <strong>Britpop</strong></h1>
-      <p class="lead mt-2">Test your knowledge of the legendary 1995 chart battle between Blur and Oasis that defined a generation.</p>
-      <div class="lead mt-2">10 questions • ~5 minutes</div>
-      <button class="btn mt-3" data-action="start">Start Quiz</button>
+      <p class="lead">Test your knowledge of the legendary 1995 chart battle between Blur and Oasis that defined a generation.</p>
+      <div class="lead">10 questions • ~5 minutes</div>
+      <button class="btn" data-action="start">Start Quiz</button>
     </div>
   </section>
 
-  <!-- Question Screen -->
   <section class="screen" data-screen="question" hidden>
     <div class="bpq-container">
-      <div class="row mt-2" aria-hidden="false">
+      <div class="row">
         <div class="lead"><strong>Question <span data-ref="current-q">1</span></strong> of <span data-ref="total-q">10</span></div>
         <div class="lead"><span data-ref="score">0</span>/<span data-ref="total-q">10</span> correct</div>
       </div>
-      <div class="progress mt-2" aria-hidden="true"><div class="bar" data-ref="bar" style="width:10%"></div></div>
-
+      <div class="progress"><div class="bar" data-ref="bar" style="width:10%"></div></div>
       <div class="qwrap">
         <h2 class="q" data-ref="question"></h2>
         <div class="answers" data-ref="answers" role="group" aria-label="Answer choices"></div>
-        <div class="feedback mt-3" data-ref="feedback" role="status" aria-live="polite"></div>
-        <button class="btn mt-3" data-action="next" hidden>Continue</button>
+        <div class="feedback" data-ref="feedback" role="status" aria-live="polite"></div>
+        <button class="btn" data-action="next" hidden>Continue</button>
       </div>
     </div>
   </section>
 
-  <!-- Results Screen -->
   <section class="screen" data-screen="results" hidden>
     <div class="bpq-container fade">
       <h1>Quiz <strong>Complete</strong></h1>
-      <div class="mt-3" style="font-size:2rem; font-weight:300;">
+      <div style="font-size:2rem; font-weight:300;">
         <span data-ref="final">0</span><span class="lead">/<span data-ref="total-q">10</span></span>
       </div>
       <p class="lead" data-ref="message"></p>
-      <div class="row mt-3" style="flex-wrap:wrap; gap:10px;">
+      <div class="row" style="flex-wrap:wrap; gap:8px;">
         <button class="btn" data-action="restart">Try Again</button>
         <button class="btn secondary" data-action="tweet">Tweet Results</button>
       </div>
-      <p class="lead mt-3" style="font-size:.9rem;">Tip: Tweet opens in a new tab. You can also copy your score.</p>
     </div>
   </section>
 
@@ -132,124 +247,153 @@
       ];
 
       const root = document.getElementById('britpop-quiz');
-      const $ = sel => root.querySelector(sel);
-      const $$ = sel => Array.from(root.querySelectorAll(sel));
+      const $ = s => root.querySelector(s);
+      const $$ = s => Array.from(root.querySelectorAll(s));
+      const screens = {
+        start: $('[data-screen="start"]'),
+        question: $('[data-screen="question"]'),
+        results: $('[data-screen="results"]')
+      };
+      const refs = {
+        currentQ: $('[data-ref="current-q"]'),
+        score: $('[data-ref="score"]'),
+        bar: $('[data-ref="bar"]'),
+        qText: $('[data-ref="question"]'),
+        answers: $('[data-ref="answers"]'),
+        feedback: $('[data-ref="feedback"]'),
+        nextBtn: $('[data-action="next"]'),
+        final: $('[data-ref="final"]'),
+        message: $('[data-ref="message"]')
+      };
 
-      const screens = { start: $('[data-screen="start"]'), question: $('[data-screen="question"]'), results: $('[data-screen="results"]') };
       $$('[data-ref="total-q"]').forEach(el => el.textContent = String(data.length));
-
-      const refs = { currentQ: $('[data-ref="current-q"]'), score: $('[data-ref="score"]'), bar: $('[data-ref="bar"]'), qText: $('[data-ref="question"]'), answers: $('[data-ref="answers"]'), feedback: $('[data-ref="feedback"]'), nextBtn: $('[data-action="next"]'), final: $('[data-ref="final"]'), message: $('[data-ref="message"]') };
-
       let idx = 0, score = 0, picked = null;
 
-      function show(which){ Object.values(screens).forEach(s => s.hidden = true); screens[which].hidden = false; }
-      function start(){ idx=0; score=0; picked=null; refs.score.textContent='0'; show('question'); render(); }
+      function show(which) {
+        Object.values(screens).forEach(s => s.hidden = true);
+        screens[which].hidden = false;
+      }
 
-      function render(){
+      function start() {
+        idx = 0;
+        score = 0;
+        picked = null;
+        refs.score.textContent = '0';
+        show('question');
+        render();
+      }
+
+      function render() {
         const q = data[idx];
-        refs.currentQ.textContent = String(idx+1);
-        refs.bar.style.width = `${((idx+1)/data.length)*100}%`;
+        refs.currentQ.textContent = String(idx + 1);
+        refs.bar.style.width = `${((idx + 1) / data.length) * 100}%`;
         refs.qText.textContent = q.q;
         refs.feedback.className = 'feedback';
         refs.feedback.textContent = '';
-        refs.nextBtn.hidden = true; refs.nextBtn.style.display='none'; refs.nextBtn.disabled=true; refs.nextBtn.setAttribute('aria-disabled','true');
+        refs.nextBtn.hidden = true;
+        refs.nextBtn.disabled = true;
+
         refs.answers.innerHTML = '';
-        q.a.forEach((label,i)=>{
-          const btn=document.createElement('button');
-          btn.type='button'; btn.className='opt'; btn.dataset.index=String(i); btn.setAttribute('aria-disabled','false'); btn.tabIndex=(i===0?0:-1);
-          const badge=document.createElement('span'); badge.className='badge'; badge.textContent=String.fromCharCode(65+i);
-          const span=document.createElement('span'); span.textContent=label;
-          btn.appendChild(badge); btn.appendChild(span);
+        q.a.forEach((label, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'opt';
+          btn.dataset.index = String(i);
+          btn.setAttribute('aria-disabled', 'false');
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = String.fromCharCode(65 + i);
+          const span = document.createElement('span');
+          span.textContent = label;
+          btn.appendChild(badge);
+          btn.appendChild(span);
           refs.answers.appendChild(btn);
         });
       }
 
-      function lockAnswers(correctIdx, chosenIdx){
-        $$('.opt').forEach((el,i)=>{ const badge=el.querySelector('.badge'); if(i===correctIdx){ el.classList.add('correct'); badge.classList.add('correct'); } else if(i===chosenIdx){ el.classList.add('incorrect'); badge.classList.add('incorrect'); } else { el.classList.add('dim'); } el.setAttribute('aria-disabled','true'); el.tabIndex=-1; });
+      function lockAnswers(correctIdx, chosenIdx) {
+        $$('.opt').forEach((el, i) => {
+          const badge = el.querySelector('.badge');
+          if (i === correctIdx) {
+            el.classList.add('correct');
+            badge.classList.add('correct');
+          } else if (i === chosenIdx) {
+            el.classList.add('incorrect');
+            badge.classList.add('incorrect');
+          } else {
+            el.classList.add('dim');
+          }
+          el.setAttribute('aria-disabled', 'true');
+        });
       }
 
-      function onPick(i){
-        if(picked!==null) return;
-        picked=i; const correct=data[idx].c;
-        if(i===correct){ score++; refs.score.textContent=String(score); refs.feedback.className='feedback ok show'; refs.feedback.textContent='Correct! Nice one.'; }
-        else { refs.feedback.className='feedback no show'; refs.feedback.textContent=`Incorrect. The correct answer is: ${data[idx].a[correct]}`; }
-        lockAnswers(correct,i);
-        refs.nextBtn.textContent = (idx===data.length-1) ? 'View Results' : 'Continue';
-        refs.nextBtn.hidden=false; refs.nextBtn.style.display=''; refs.nextBtn.disabled=false; refs.nextBtn.removeAttribute('aria-disabled'); refs.nextBtn.focus();
+      function onPick(i) {
+        if (picked !== null) return;
+        picked = i;
+        const correct = data[idx].c;
+        if (i === correct) {
+          score++;
+          refs.score.textContent = String(score);
+          refs.feedback.className = 'feedback show';
+          refs.feedback.textContent = '✓ Correct';
+        } else {
+          refs.feedback.className = 'feedback show';
+          refs.feedback.textContent = `✕ Incorrect. Correct: ${data[idx].a[correct]}`;
+        }
+        lockAnswers(correct, i);
+        refs.nextBtn.textContent = (idx === data.length - 1) ? 'View Results' : 'Continue';
+        refs.nextBtn.hidden = false;
+        refs.nextBtn.disabled = false;
+        refs.nextBtn.focus();
       }
 
-      function next(){
-        if(picked===null) return; // block until an answer is chosen
-        if(idx < data.length - 1){ idx++; picked=null; render(); setTimeout(()=>{ const first=root.querySelector('.opt'); first&&first.focus(); },0); }
-        else { results(); }
-      }
-
-      function results(){
-        show('results');
-        refs.final.textContent=String(score);
-        const pct=Math.round((score/data.length)*100);
-        let msg='';
-        if(pct>=90) msg = "Outstanding! You're a true Britpop expert.";
-        else if(pct>=70) msg='Excellent work! You know your 90s music history.';
-        else if(pct>=50) msg='Good effort! Time to dive deeper into Britpop.';
-        else msg='Keep exploring this amazing era of British music.';
-        refs.message.textContent=msg;
-      }
-
-      function restart(){ show('start'); }
-
-      function tweet(){
-        const pct=Math.round((score/data.length)*100);
-        const text=`I scored ${score}/${data.length} (${pct}%) on the Battle of Britpop Quiz!`;
-        const url='https://audi0ech0es.github.io/Battle-of-Britpop-Quiz/';
-        const intent='https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url);
-        const w=550,h=420; const y=(window.top===window.self)?(screen.height-h)/2:100; const x=(window.top===window.self)?(screen.width-w)/2:100;
-        const win=window.open(intent,'_blank',`noopener,noreferrer,width=${w},height=${h},left=${x},top=${y}`);
-        if(!win){ // fallback: copy
-          try{
-            const fallback=text+' '+url;
-            if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(fallback).then(()=>alert('Score copied to clipboard!')); }
-            else{ const ta=document.createElement('textarea'); ta.value=fallback; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Score copied to clipboard!'); }
-          }catch(_){ window.prompt('Copy your results:', text+' '+url); }
+      function next() {
+        if (picked === null) return;
+        if (idx < data.length - 1) {
+          idx++;
+          picked = null;
+          render();
+        } else {
+          show('results');
+          refs.final.textContent = String(score);
+          const pct = Math.round((score / data.length) * 100);
+          refs.message.textContent =
+            pct >= 90 ? "Outstanding! You're a true Britpop expert." :
+            pct >= 70 ? "Excellent work! You know your 90s music history." :
+            pct >= 50 ? "Good effort! Time to dive deeper into Britpop." :
+            "Keep exploring this amazing era of British music.";
         }
       }
 
-      function onAnswerKeys(e){
-        const items=$$('.opt'); const current=document.activeElement; const i=items.indexOf(current); if(i===-1) return;
-        if(e.key==='ArrowDown'||e.key==='ArrowRight'){ e.preventDefault(); const n=items[Math.min(i+1,items.length-1)]; n&&n.focus(); }
-        else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){ e.preventDefault(); const p=items[Math.max(i-1,0)]; p&&p.focus(); }
-        else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); const idx=Number(current.getAttribute('data-index')); onPick(idx); }
+      function restart() {
+        show('start');
       }
 
-      root.addEventListener('click',(e)=>{
-        const t=e.target;
-        const ans=t.closest && t.closest('.opt'); if(ans && ans.getAttribute('aria-disabled')!=='true'){ onPick(Number(ans.getAttribute('data-index'))); return; }
-        const action=t.closest && t.closest('[data-action]'); if(!action) return; const act=action.getAttribute('data-action');
-        if(act==='start'){ show('question'); start(); }
-        else if(act==='next'){ if(refs.nextBtn.disabled) return; next(); }
-        else if(act==='restart'){ restart(); }
-        else if(act==='tweet'){ tweet(); }
+      function tweet() {
+        const pct = Math.round((score / data.length) * 100);
+        const text = `I scored ${score}/${data.length} (${pct}%) on the Battle of Britpop Quiz!`;
+        const url = 'https://audi0ech0es.github.io/Battle-of-Britpop-Quiz/';
+        const intent = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
+        window.open(intent, '_blank');
+      }
+
+      root.addEventListener('click', e => {
+        const t = e.target;
+        const ans = t.closest('.opt');
+        if (ans && ans.getAttribute('aria-disabled') !== 'true') {
+          onPick(Number(ans.dataset.index));
+          return;
+        }
+        const action = t.closest('[data-action]');
+        if (!action) return;
+        const act = action.getAttribute('data-action');
+        if (act === 'start') start();
+        else if (act === 'next') next();
+        else if (act === 'restart') restart();
+        else if (act === 'tweet') tweet();
       });
 
-      refs.answers.addEventListener('keydown', onAnswerKeys);
       show('start');
-    })();
-  </script>
-
-  <!-- Child iframe auto-resizer (send height to parent; harmless if not iframed) -->
-  <script>
-    (function(){
-      var last=0;
-      function send(){
-        var h=Math.max(document.documentElement.scrollHeight, document.body?document.body.scrollHeight:0);
-        if(h!==last){ last=h; parent.postMessage({ type:'bpq:height', height:h }, '*'); }
-      }
-      function debounce(fn,ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn,ms); }; }
-      if('ResizeObserver' in window){ var ro=new ResizeObserver(debounce(send,60)); ro.observe(document.documentElement); if(document.body) ro.observe(document.body); }
-      window.addEventListener('load', send);
-      window.addEventListener('resize', debounce(send,100));
-      window.addEventListener('message', function(e){ if(e && e.data && e.data.type==='bpq:requestHeight') send(); });
-      setTimeout(send,200);
     })();
   </script>
 </div>
